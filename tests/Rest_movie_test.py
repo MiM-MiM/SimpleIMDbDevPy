@@ -2,13 +2,12 @@ import responses, unittest
 from SimpleIMDbDev import Rest
 from requests.exceptions import HTTPError
 
-"""Test cases for GraphQL Methods
-Fake the responses to avoid API call issues if a server is down."""
 
+class TestMovieMethods(unittest.TestCase):
+    """Test cases for Rest Methods
+    Fake the responses to avoid API call issues if a server is down."""
 
-class TestGraphQLMethodsMovie(unittest.TestCase):
-
-    def test_Rest_invalid_types(self):
+    def test_invalid_types(self):
         """Test for incorrect types."""
         with self.assertRaises(TypeError):
             Rest.getMovie(["a"])  # type: ignore
@@ -29,7 +28,7 @@ class TestGraphQLMethodsMovie(unittest.TestCase):
         with self.assertRaises(TypeError):
             Rest.getMovie("tt0477052", 3.14)  # type: ignore
 
-    def test_Rest_invalid_value(self):
+    def test_invalid_value(self):
         """Test for correct types with invalid values for arguments."""
         with self.assertRaises(ValueError):
             Rest.getMovie("a")
@@ -45,8 +44,8 @@ class TestGraphQLMethodsMovie(unittest.TestCase):
             Rest.getMovie("tt0477052", "invalid choice")
 
     @responses.activate
-    def test_Rest_valid(self):
-        """Test GetMovie along with all possible updates.
+    def test_valid(self):
+        """Test getMovie along with all possible updates.
         Some sample responses have been shortened for ease of view."""
         tt0477051 = {
             "id": "tt0477051",
@@ -70,6 +69,9 @@ class TestGraphQLMethodsMovie(unittest.TestCase):
             status=200,
         )
         tt0477051_response = Rest.getMovie("tt0477051")
+        self.assertEqual(tt0477051_response, tt0477051)
+
+        tt0477051_response = Rest.getMovie("477051")
         self.assertEqual(tt0477051_response, tt0477051)
 
         tt0477051_akas = {
@@ -156,7 +158,7 @@ class TestGraphQLMethodsMovie(unittest.TestCase):
         self.assertEqual(tt0477051_response, tt0477051)
 
     @responses.activate
-    def test_Rest_invalid_ID(self):
+    def test_invalid_ID(self):
         tt0477052 = {
             "code": 13,
             "message": "GetTitleFromFetcher: failed fetch: imdb:FetchTitle parseTitleObject: missing type titleID:tt04770510",

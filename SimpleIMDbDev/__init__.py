@@ -5,7 +5,7 @@ def flatten(obj: dict) -> dict:
     """Flatten a dict containing other objects.
     Each object that has a `as_dict` method gets called with recursion.
 
-    Input:
+    Args:
         obj(dict): The dict to be flattened.
 
     Returns:
@@ -48,32 +48,43 @@ class IMDbAPI:
             )
         self._parser = self._parsers.get(parser.lower(), "GraphQL")
 
-    def getMovie(self, id: int | str = "") -> dict:
+    def getMovie(self, id: int | str = "", subsection: str = "") -> dict:
+        if subsection != "" and self._parser != "Rest":
+            raise NotImplementedError("Subselection only possible via rest API.")
         match self._parser:
             case "GraphQL":
                 response = GraphQL.getMovie(id).as_dict()
             case "Rest":
-                response = Rest.getMovie(id)
+                response = Rest.getMovie(id, subsection)
             case _:
                 response = GraphQL.getMovie(id).as_dict()
+        return flatten(response)
+
+    def getPerson(self, id: str | int, subsection: str = "") -> dict:
+        if subsection != "" and self._parser != "Rest":
+            raise NotImplementedError("Subselection only possible via rest API.")
+        match self._parser:
+            case "GraphQL":
+                response = GraphQL.getPerson(id).as_dict()
+            case "Rest":
+                response = Rest.getPerson(id, subsection)
+            case _:
+                response = GraphQL.getPerson(id).as_dict()
         return flatten(response)
     
     def updateMovie(self, movie: dict, subselection: str = "") -> dict:
-        if self._parser != "Rest":
-            raise NotImplementedError("Only the 'Rest' API supports updating.")
-        return Rest.updateMovie(movie, subselection)
-
-
-    def getPerson(self, id: str | int) -> dict:
-        match self._parser:
-            case "GraphQL":
-                response = GraphQL.getPerson(id).as_dict()
-            case "Rest":
-                response = Rest.getPerson(id)
-            case _:
-                response = GraphQL.getPerson(id).as_dict()
-        return flatten(response)
+        if subselection != "" and self._parser != "Rest":
+            raise NotImplementedError("Updating movie subselection only possible via rest API.")
+        movie = Rest.updateMovie(movie, subselection)
+        return flatten(movie)
+    
+    def updatePerson(self, person: dict, subselection: str = "") -> dict:
+        if subselection != "" and self._parser != "Rest":
+            raise NotImplementedError("Updating person subselection only possible via rest API.")
+        person = Rest.updatePerson(person, subselection)
+        return flatten(person)
 
     def search(self, title: str, year: int, country: str):
         if self._parser != "Rest":
             raise NotImplementedError("Only the 'Rest' API supports searching.")
+        raise NotImplementedError("To come.")

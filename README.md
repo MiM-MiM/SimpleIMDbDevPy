@@ -1,6 +1,14 @@
 # General Information
 SimpleIMDbDev is a Python3.10 implementation to fetch data from imdbapi.dev
 
+## Features
+- Ability to use either REST or GraphQL API.
+- Get information by personID or movieID
+- REST can update person or movie subsections.
+
+## Planned Features
+- Searching via REST API.
+
 # Installation
 SimpleIMDbDev is configured as a python module. It is suggested to create a [venv](https://docs.python.org/3/library/venv.html) first.
 

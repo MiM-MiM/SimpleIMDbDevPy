@@ -2,6 +2,7 @@ __all__ = ["getMovie", "getPerson"]
 
 import requests
 from functools import lru_cache
+import re
 
 from SimpleIMDbDev.constants import BASE_HEADERS
 
@@ -57,7 +58,7 @@ class IMDbGraphQL:
         def __init__(self, **kwargs: dict):
             id = kwargs.get("id", "")
             if isinstance(id, int):
-                id = "tt" + str(id).ljust(7, "0")
+                id = "tt" + str(id).rjust(7, "0")
             kwargs["id"] = id  # type: ignore
             check_kwargs(self, self.SCHEMA, kwargs)
             self.__dict__ = todict(self)  # type: ignore
@@ -102,7 +103,7 @@ class IMDbGraphQL:
         def __init__(self, **kwargs: dict):
             id = kwargs.get("id", "")
             if isinstance(id, int):
-                id = "nm" + str(id).ljust(7, "0")
+                id = "nm" + str(id).rjust(7, "0")
             kwargs["id"] = id  # type: ignore
             check_kwargs(self, self.SCHEMA, kwargs)
             self.__dict__ = todict(self)  # type: ignore
@@ -485,15 +486,11 @@ def get_attribute_main_query(schema: dict, all: bool = True) -> str:
 @lru_cache(maxsize=None)
 def getMovie(id: int | str = "") -> IMDbGraphQL.Title:
     # Does not work with TV Episodes
-    if not id:
-        raise ValueError("A valid ID must be provided.")
     if not isinstance(id, str) and not isinstance(id, int):
         raise TypeError(f"ID must be of type str or int, {type(id)} given.")
-    if not str(id).replace("tt", "").isnumeric():
-        raise ValueError(
-            f"The format of the ID is incorrect, should be tt### or ####. Given: {id}"
-        )
-    query_id = "tt" + str(id).replace("tt", "").ljust(7, "0")
+    query_id = "tt" + str(id).replace("tt", "").rjust(7, "0")
+    if not re.fullmatch(r'tt\d{7}', query_id):
+        raise ValueError("A valid ID must be provided, form tt#######.")
     attributes = get_attribute_main_query(IMDbGraphQL.Title.SCHEMA)
     query = """query titleById
     {{
@@ -504,6 +501,7 @@ def getMovie(id: int | str = "") -> IMDbGraphQL.Title:
     """.format(
         query_id=query_id, attributes=attributes
     )
+    query = re.sub(' +', ' ', query.replace(f'\n', ' ')).strip()
     response = requests.post(API_ENDPOINT, json={"query": query}, headers=BASE_HEADERS)
     response.raise_for_status()
     response_json = response.json()
@@ -511,21 +509,38 @@ def getMovie(id: int | str = "") -> IMDbGraphQL.Title:
         raise ValueError(errors)
     response_json = response_json["data"]["title"]
     movie = IMDbGraphQL.Title(**response_json)
+    print(flatten(movie.as_dict()))
     return movie
+
+def flatten(obj: dict) -> dict:
+    """Flatten a dict containing other objects.
+    Each object that has a `as_dict` method gets called with recursion.
+
+    Args:
+        obj(dict): The dict to be flattened.
+
+    Returns:
+        dict: The flattened dict."""
+    if not isinstance(obj, dict):
+        raise ValueError("flatten must be called with a dict.")
+    final_obj = dict()
+    for key, val in obj.items():
+        try:
+            val_as_dict = val.as_dict()
+            final_obj[key] = flatten(val_as_dict)
+        except AttributeError:
+            final_obj[key] = val
+    return final_obj
 
 
 @lru_cache(maxsize=None)
 def getPerson(id: str | int) -> IMDbGraphQL.Name:
     global BASE_HEADERS
-    if not id:
-        raise ValueError("A valid ID must be provided.")
     if not isinstance(id, str) and not isinstance(id, int):
         raise TypeError(f"ID must be of type str or int, {type(id)} given.")
-    if not str(id).replace("nm", "").isnumeric():
-        raise ValueError(
-            f"The format of the ID is incorrect, should be nm### or ####. Given: {id}"
-        )
-    query_id = "nm" + str(id).replace("nm", "").ljust(7, "0")
+    query_id = "nm" + str(id).replace("nm", "").rjust(7, "0")
+    if not re.fullmatch(r'nm\d{7}', query_id):
+        raise ValueError("A valid ID must be provided, form nm#######.")
     attributes = get_attribute_main_query(IMDbGraphQL.Name.SCHEMA)
     query = """query personById
     {{
@@ -536,6 +551,7 @@ def getPerson(id: str | int) -> IMDbGraphQL.Name:
     """.format(
         query_id=query_id, attributes=attributes
     )
+    query = re.sub(' +', ' ', query.replace(f'\n', ' ')).strip()
     response = requests.post(API_ENDPOINT, json={"query": query}, headers=BASE_HEADERS)
     response.raise_for_status()
     response_json = response.json()
