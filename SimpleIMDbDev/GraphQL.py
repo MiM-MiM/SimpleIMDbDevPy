@@ -535,7 +535,6 @@ def flatten(obj: dict) -> dict:
 
 @lru_cache(maxsize=None)
 def getPerson(id: str | int) -> IMDbGraphQL.Name:
-    global BASE_HEADERS
     if not isinstance(id, str) and not isinstance(id, int):
         raise TypeError(f"ID must be of type str or int, {type(id)} given.")
     query_id = "nm" + str(id).replace("nm", "").rjust(7, "0")

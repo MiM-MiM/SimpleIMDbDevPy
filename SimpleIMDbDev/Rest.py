@@ -9,7 +9,6 @@ BASE_URL = "https://rest.imdbapi.dev"
 
 @lru_cache(maxsize=None)
 def getMovie(id: int | str = "", subselection: str = "") -> dict:
-    global BASE_HEADERS
     allowed_subselection = ['akas', 'credits', 'release_dates']
     if not isinstance(id, str) and not isinstance(id, int):
         raise TypeError(f"ID must be of type str or int, {type(id)} given.")
@@ -50,7 +49,6 @@ def updateMovie(movie: dict, subselection: str = "") -> dict:
 
 @lru_cache(maxsize=None)
 def getPerson(id: int | str = "", subselection: str = "") -> dict:
-    global BASE_HEADERS
     allowed_subselection = ['known_for']
     if not isinstance(id, str) and not isinstance(id, int):
         raise TypeError(f"ID must be of type str or int, {type(id)} given.")
