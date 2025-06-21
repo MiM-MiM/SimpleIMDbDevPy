@@ -11,7 +11,7 @@ setuptools.setup(
     author="MiM",
     keywords=["IMDb", "IMDbDev", "IMDbAPI", "API"],
     license="GNU General Public License v3.0",
-    extrasextras_require={
+    extras_require={
         'dev': DEV_PACKAGES,
     },
     install_requires=[
