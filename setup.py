@@ -1,5 +1,7 @@
 import setuptools
 
+DEV_PACKAGES = ["responses", "flake8", "pytest"]
+
 setuptools.setup(
     name="SimpleIMDbDev",
     packages=["SimpleIMDbDev"],
@@ -9,6 +11,9 @@ setuptools.setup(
     author="MiM",
     keywords=["IMDb", "IMDbDev", "IMDbAPI", "API"],
     license="GNU General Public License v3.0",
+    extrasextras_require={
+        'dev': DEV_PACKAGES,
+    },
     install_requires=[
         'importlib-metadata; python_version>="3.10"',
         "requests",
