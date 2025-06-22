@@ -161,3 +161,56 @@ def updatePerson(person: dict, subselection: str = "") -> dict:
     subeelection_json = getPerson(person_id, subselection)
     person[subselection] = subeelection_json[subselection]
     return person
+
+
+@lru_cache(maxsize=None)
+def searchMovie(query: str, year: int = 0, max_year_difference: int = 2) -> list[dict]:
+    """Search for a movie.
+    Allows for passing a year to filter and search.
+
+    Args:
+        query (str): Any query to search, typically the title.
+        year (int, optional): A year to help filter the results, also passed to the search via `(year)`
+            Cannot be negative.
+        max_year_difference (int, optional): To filter the results, a difference of 0 passed means exact.
+            Negative means no filtering is being done.
+            Default of 2.
+
+    Returns:
+        list[dict]: The list of the results, not all data is returned, a call to `getMovie()` may be needed.
+
+    Raises:
+        TypeError: When an argument is of the incorrec type.
+        ValueError: When the value of an argument is invalid.
+        HTTPError: Any API call or connection issues may cause this, none raised manually.
+    """
+    if not isinstance(query, str):
+        raise TypeError(f"The query must be a string, {type(query)} passed.")
+    if not isinstance(year, int):
+        raise TypeError(f"The year must be an int, {type(year)} passed.")
+    if not isinstance(max_year_difference, int):
+        raise TypeError(
+            f"The country must be an int, {type(max_year_difference)} passed."
+        )
+    if not query:
+        raise ValueError("The query cannot be blank.")
+    if year < 0:
+        raise ValueError(f"The year cannot be less than 0, {year} given.")
+    search_query = f"{query} ({year})" if year else query
+    url = f"{BASE_URL}/v2/search/titles"
+    params = {"query": search_query}
+    response = requests.get(url, headers=BASE_HEADERS, params=params)
+    response.raise_for_status()
+    response_json = response.json()
+    titles = response_json.get("titles", [])
+    if year and max_year_difference >= 0:
+        # Negative max_difference is no filter, year only used for search query.
+        filtered = [
+            title
+            for title in titles
+            if title.get("start_year") is not None
+            and abs(title.get("start_year") - year) <= max_year_difference
+        ]
+    else:
+        filtered = titles
+    return filtered

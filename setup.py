@@ -6,7 +6,7 @@ setuptools.setup(
     name="SimpleIMDbDev",
     packages=["SimpleIMDbDev"],
     url="https://github.com/MiM-MiM/SimpleIMDbDevPy",
-    version="1.0.1",
+    version="1.1.0",
     description="Python3.10+ to fetch data from imdbapi.dev",
     author="MiM",
     keywords=["IMDb", "IMDbDev", "IMDbAPI", "API"],

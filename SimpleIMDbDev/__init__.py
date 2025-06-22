@@ -166,7 +166,31 @@ class IMDbAPI:
         person = Rest.updatePerson(person, subselection)
         return flatten(person)
 
-    def search(self, title: str, year: int, country: str):
+    def searchMovie(
+        self, query: str, year: int = 0, max_year_difference: int = 2
+    ) -> list[dict]:
+        """Search for a movie.
+        Allows for passing a year to filter and search.
+
+        Note: Only the `REST` parser can be used.
+
+        Args:
+            query (str): Any query to search, typically the title.
+            year (int, optional): A year to help filter the results, also passed to the search via `(year)`
+                Cannot be negative.
+            max_year_difference (int, optional): To filter the results, a difference of 0 passed means exact.
+                Negative means no filtering is being done.
+                Default of 2.
+
+        Returns:
+            list[dict]: The list of the results, not all data is returned, a call to `getMovie()` may be needed.
+
+        Raises:
+            NotImplementedError: If not used with the `REST` parser.
+            TypeError: When an argument is of the incorrec type.
+            ValueError: When the value of an argument is invalid.
+            HTTPError: Any API call or connection issues may cause this, none raised manually.
+        """
         if self._parser != "Rest":
             raise NotImplementedError("Only the 'Rest' API supports searching.")
-        raise NotImplementedError("To come.")
+        return Rest.searchMovie(query, year, max_year_difference)
