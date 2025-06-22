@@ -509,7 +509,6 @@ def getMovie(id: int | str = "") -> IMDbGraphQL.Title:
         raise ValueError(errors)
     response_json = response_json["data"]["title"]
     movie = IMDbGraphQL.Title(**response_json)
-    print(flatten(movie.as_dict()))
     return movie
 
 def flatten(obj: dict) -> dict:
