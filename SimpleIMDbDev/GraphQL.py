@@ -64,9 +64,15 @@ class IMDbGraphQL:
             self.__dict__ = todict(self)  # type: ignore
 
         def as_dict(self) -> dict:
+            """Gets the dict representation of the object.
+
+            Returns:
+                dict: a dict containing all the data of the object.
+            """
             return self.__dict__
 
         def get(self, key):
+            """Implementing the dict get method."""
             return self.__getitem__(key)
 
         def __getitem__(self, key):
@@ -109,9 +115,15 @@ class IMDbGraphQL:
             self.__dict__ = todict(self)  # type: ignore
 
         def as_dict(self) -> dict:
+            """Gets the dict representation of the object.
+
+            Returns:
+                dict: a dict containing all the data of the object.
+            """
             return self.__dict__
 
         def get(self, key):
+            """Implementing the dict get method."""
             return self.__getitem__(key)
 
         def __getitem__(self, key):
@@ -141,9 +153,15 @@ class IMDbGraphQL:
             self.__dict__ = todict(self)  # type: ignore
 
         def as_dict(self) -> dict:
+            """Gets the dict representation of the object.
+
+            Returns:
+                dict: a dict containing all the data of the object.
+            """
             return self.__dict__
 
         def get(self, key):
+            """Implementing the dict get method."""
             return self.__getitem__(key)
 
         def __getitem__(self, key):
@@ -173,9 +191,15 @@ class IMDbGraphQL:
             self.__dict__ = todict(self)  # type: ignore
 
         def as_dict(self) -> dict:
+            """Gets the dict representation of the object.
+
+            Returns:
+                dict: a dict containing all the data of the object.
+            """
             return self.__dict__
 
         def get(self, key):
+            """Implementing the dict get method."""
             return self.__getitem__(key)
 
         def __getitem__(self, key):
@@ -205,9 +229,15 @@ class IMDbGraphQL:
             self.__dict__ = todict(self)  # type: ignore
 
         def as_dict(self) -> dict:
+            """Gets the dict representation of the object.
+
+            Returns:
+                dict: a dict containing all the data of the object.
+            """
             return self.__dict__
 
         def get(self, key):
+            """Implementing the dict get method."""
             return self.__getitem__(key)
 
         def __getitem__(self, key):
@@ -237,9 +267,15 @@ class IMDbGraphQL:
             self.__dict__ = todict(self)  # type: ignore
 
         def as_dict(self) -> dict:
+            """Gets the dict representation of the object.
+
+            Returns:
+                dict: a dict containing all the data of the object.
+            """
             return self.__dict__
 
         def get(self, key):
+            """Implementing the dict get method."""
             return self.__getitem__(key)
 
         def __getitem__(self, key):
@@ -269,9 +305,15 @@ class IMDbGraphQL:
             self.__dict__ = todict(self)  # type: ignore
 
         def as_dict(self) -> dict:
+            """Gets the dict representation of the object.
+
+            Returns:
+                dict: a dict containing all the data of the object.
+            """
             return self.__dict__
 
         def get(self, key):
+            """Implementing the dict get method."""
             return self.__getitem__(key)
 
         def __getitem__(self, key):
@@ -303,9 +345,15 @@ class IMDbGraphQL:
             self.__dict__ = todict(self)  # type: ignore
 
         def as_dict(self) -> dict:
+            """Gets the dict representation of the object.
+
+            Returns:
+                dict: a dict containing all the data of the object.
+            """
             return self.__dict__
 
         def get(self, key):
+            """Implementing the dict get method."""
             return self.__getitem__(key)
 
         def __getitem__(self, key):
@@ -337,9 +385,15 @@ class IMDbGraphQL:
             self.__dict__ = todict(self)  # type: ignore
 
         def as_dict(self) -> dict:
+            """Gets the dict representation of the object.
+
+            Returns:
+                dict: a dict containing all the data of the object.
+            """
             return self.__dict__
 
         def get(self, key):
+            """Implementing the dict get method."""
             return self.__getitem__(key)
 
         def __getitem__(self, key):
@@ -370,9 +424,15 @@ class IMDbGraphQL:
             self.__dict__ = todict(self)  # type: ignore
 
         def as_dict(self) -> dict:
+            """Gets the dict representation of the object.
+
+            Returns:
+                dict: a dict containing all the data of the object.
+            """
             return self.__dict__
 
         def get(self, key):
+            """Implementing the dict get method."""
             return self.__getitem__(key)
 
         def __getitem__(self, key):
@@ -402,7 +462,21 @@ IMDbGraphQLTypes = {
 }
 
 
-def todict(obj, classkey=None):
+def todict(obj, classkey=None) -> dict | list:
+    """Converts an object to a dict.
+    If the object is already a dict, it calls it on each item within.
+    Otherwise it loops through each properity that does not start with an underscore or is a callable, i.e. method.
+
+    Args:
+        obj (Any): The object to convert.
+        classkey (Any): A class object key to set.
+
+    Returns:
+        dict | list: The dict representation of the object.
+            An itterable type is returned as a list of each item called with `todict()`
+
+    Raises:
+        All errors raised come from in other methods."""
     if isinstance(obj, dict):
         data = {}
         for k, v in obj.items():
@@ -421,15 +495,33 @@ def todict(obj, classkey=None):
             ]
         )
         if classkey is not None and hasattr(obj, "__class__"):
-            data[classkey] = obj.__class__.__name__
+            data[classkey] = obj.__class__.__name__  # type: ignore
         return data
     else:
-        return obj
+        return obj  # type: ignore
 
 
 def check_kwargs(
     obj: object, schema: dict, kwargs: dict, ignore_required: bool = False
-):
+) -> None:
+    """Check and set kwargs for an object creation.
+    Uses the schema provided and an optional ignore required flag.
+
+    Args:
+        obj (object): Any object being created.
+        schema (dict): A schema dict containing the outline for expected types and if required.
+        kwargs (dict): The values being given to be set.
+        ignore_required (bool, optional): Allow for skipping of the required check.
+            Useful if you are only setting a single item and not the entire object.
+
+    Returns:
+        None: No return
+
+    Raises:
+        AttributeError: Attempted to assign a key not found in the schema.
+        ValueError: A field is missing and `ignore_required` was not passed.
+        TypeError: When the type being set did not match the expected type in the schema.
+    """
     for key in kwargs:
         if key not in schema:
             raise AttributeError(f"{key} is not a valid attribute for {obj.__name__}")  # type: ignore
@@ -465,6 +557,24 @@ def check_kwargs(
 
 
 def get_attribute_main_query(schema: dict, all: bool = True) -> str:
+    """Generate an attribute main query.
+    Recursively generates the query if an object contains another object.
+
+    Args:
+        schema (dict): The object's schema to create the main query for.
+        all (bool, optional): Useful on the first run to get every property,
+            `false` later to avoid circular generation.
+
+    Returns:
+        str: The GraphQL attribute query.
+
+    Raises:
+        TypeError: When tye types are incorrect.
+    """
+    if not isinstance(schema, dict):
+        raise TypeError(f"The schema must be a dict, {type(schema)}")
+    if not isinstance(all, bool):
+        raise TypeError(f"All must be a boolean value, {type(all)} given.")
     query = ""
     for field_name in schema:
         field_type, required, main = schema[field_name]
@@ -485,7 +595,21 @@ def get_attribute_main_query(schema: dict, all: bool = True) -> str:
 
 @lru_cache(maxsize=None)
 def getMovie(id: int | str = "") -> IMDbGraphQL.Title:
-    # Does not work with TV Episodes
+    """Gets the movie information.
+
+    Note: TV Episodes do not work.
+
+    Args:
+        id (int | str): The ID of the movie, tt### or ###.
+
+    Returns:
+        IMDbGraphQL.Title: The information gathered from the query.
+
+    Raises:
+        TypeError: When an agrument is not of the correct type.
+        ValueError: When an argument was of the correct type, but invalid values.
+        HTTPError: Any lookup errors or connection issues.
+    """
     if not isinstance(id, str) and not isinstance(id, int):
         raise TypeError(f"ID must be of type str or int, {type(id)} given.")
     query_id = "tt" + str(id).replace("tt", "").rjust(7, "0")
@@ -514,6 +638,19 @@ def getMovie(id: int | str = "") -> IMDbGraphQL.Title:
 
 @lru_cache(maxsize=None)
 def getPerson(id: str | int) -> IMDbGraphQL.Name:
+    """Gets the person information.
+
+    Args:
+        id (int | str): The ID of the person, nm### or ###.
+
+    Returns:
+        IMDbGraphQL.Name: The information gathered from the query.
+
+    Raises:
+        TypeError: When an agrument is not of the correct type.
+        ValueError: When an argument was of the correct type, but invalid values.
+        HTTPError: Any lookup errors or connection issues.
+    """
     if not isinstance(id, str) and not isinstance(id, int):
         raise TypeError(f"ID must be of type str or int, {type(id)} given.")
     query_id = "nm" + str(id).replace("nm", "").rjust(7, "0")

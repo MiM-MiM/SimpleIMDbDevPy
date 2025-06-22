@@ -1,3 +1,5 @@
+__all__ = ["IMDbAPI"]
+
 from SimpleIMDbDev import GraphQL, Rest
 
 
@@ -26,6 +28,8 @@ class IMDbAPI:
     """Base class for IMDbAPI, using standardized dicts.
     Default is `Rest` interface.
 
+    Note: Underlying API calls are cached using their respective modules.
+
     Notes:
         - Episodes do not work under the `GraphQL` interface.
         - GraphQL has a list of images where Rest has a primary image.
@@ -49,6 +53,25 @@ class IMDbAPI:
         self._parser = self._parsers.get(parser.lower(), "GraphQL")
 
     def getMovie(self, id: int | str = "", subsection: str = "") -> dict:
+        """Gets the movie information, subselection is for additional data.
+        To get both you must make two calls, one for the main moviee dict and another via update.
+
+        Note: Updating objects is only possible via REST.
+
+        Args:
+            self (IMDbAPI): The object that defined the parser to use.
+            id (int | str): The ID of the movie, tt### or ###.
+            subselection (str, optional): Typically called via update, the additional data to grab.
+
+        Returns:
+            dict: The information gathered from the query.
+
+        Raises:
+            NotImplementedError: When the requested API call is not implemented for that type.
+            TypeError: When an agrument is not of the correct type.
+            ValueError: When an argument was of the correct type, but invalid values.
+            HTTPError: Any lookup errors or connection issues.
+        """
         if subsection != "" and self._parser != "Rest":
             raise NotImplementedError("Subselection only possible via rest API.")
         match self._parser:
@@ -61,6 +84,25 @@ class IMDbAPI:
         return flatten(response)
 
     def getPerson(self, id: str | int, subsection: str = "") -> dict:
+        """Gets the person information, subselection is for additional data.
+        To get both you must make two calls, one for the main person dict and another via update.
+
+        Note: Updating objects is only possible via REST.
+
+        Args:
+            self (IMDbAPI): The object that defined the parser to use.
+            id (int | str): The ID of the person, nm### or ###.
+            subselection (str, optional): Typically called via update, the additional data to grab.
+
+        Returns:
+            dict: The information gathered from the query.
+
+        Raises:
+            NotImplementedError: When the requested API call is not implemented for that type.
+            TypeError: When an agrument is not of the correct type.
+            ValueError: When an argument was of the correct type, but invalid values.
+            HTTPError: Any lookup errors or connection issues.
+        """
         if subsection != "" and self._parser != "Rest":
             raise NotImplementedError("Subselection only possible via rest API.")
         match self._parser:
@@ -73,6 +115,24 @@ class IMDbAPI:
         return flatten(response)
 
     def updateMovie(self, movie: dict, subselection: str = "") -> dict:
+        """Updates a movie object (dict).
+        The dict is required to have a valid ID, the rest are optional.
+        The subselection is only allowed to be one of `akas`, `credits`, or `release_dates`.
+
+        Args:
+            self (IMDbAPI): The object that defined the parser to use.
+            movie (dict): The movie object, typically obtained by `getMovie(id)`
+            subselction (str): The data to update.
+
+        Returns:
+            dict: The updated movie.
+
+        Raises:
+            NotImplementedError: When the requested API call is not implemented for that type.
+            TypeError: When an agrument is not of the correct type.
+            ValueError: When an argument was of the correct type, but invalid values.
+            HTTPError: raised from the `getMovie` call on any lookup errors or connection issues.
+        """
         if subselection != "" and self._parser != "Rest":
             raise NotImplementedError(
                 "Updating movie subselection only possible via rest API."
@@ -81,6 +141,24 @@ class IMDbAPI:
         return flatten(movie)
 
     def updatePerson(self, person: dict, subselection: str = "") -> dict:
+        """Updates a person object (dict).
+        The dict is required to have a valid ID, the rest are optional.
+        The subselection is only allowed to be `known_for`.
+
+        Args:
+            self (IMDbAPI): The object that defined the parser to use.
+            person (dict): The person object, typically obtained by `getPerson(id)`
+            subselction (str): The data to update.
+
+        Returns:
+            dict: The updated person.
+
+        Raises:
+            NotImplementedError: When the requested API call is not implemented for that type.
+            TypeError: When an agrument is not of the correct type.
+            ValueError: When an argument was of the correct type, but invalid values.
+            HTTPError: raised from the `getPerson` call on any lookup errors or connection issues.
+        """
         if subselection != "" and self._parser != "Rest":
             raise NotImplementedError(
                 "Updating person subselection only possible via rest API."

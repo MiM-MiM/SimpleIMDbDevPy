@@ -12,6 +12,21 @@ BASE_URL = "https://rest.imdbapi.dev"
 
 @lru_cache(maxsize=None)
 def getMovie(id: int | str = "", subselection: str = "") -> dict:
+    """Gets the movie information, subselection is for additional data.
+    To get both you must make two calls, one for the main movie dict and another via update.
+
+    Args:
+        id (int | str): The ID of the movie, tt### or ###.
+        subselection (str, optional): Typically called via update, the additional data to grab.
+
+    Returns:
+        dict: The information gathered from the query.
+
+    Raises:
+        TypeError: When an agrument is not of the correct type.
+        ValueError: When an argument was of the correct type, but invalid values.
+        HTTPError: Any lookup errors or connection issues.
+    """
     allowed_subselection = ["akas", "credits", "release_dates"]
     if not isinstance(id, str) and not isinstance(id, int):
         raise TypeError(f"ID must be of type str or int, {type(id)} given.")
@@ -36,7 +51,23 @@ def getMovie(id: int | str = "", subselection: str = "") -> dict:
 
 
 def updateMovie(movie: dict, subselection: str = "") -> dict:
-    # Do not cache, calls getMovie that will.
+    """Updates a movie object (dict).
+    The dict is required to have a valid ID, the rest are optional.
+    The subselection is only allowed to be one of `akas`, `credits`, or `release_dates`.
+    This is not directly cached, `getMovie` is cached and will be called for the new data.
+
+    Args:
+        movie (dict): The movie object, typically obtained by `getMovie(id)`
+        subselction (str): The data to update.
+
+    Returns:
+        dict: The updated movie.
+
+    Raises:
+        TypeError: When an agrument is not of the correct type.
+        ValueError: When an argument was of the correct type, but invalid values.
+        HTTPError: raised from the `getMovie` call on any lookup errors or connection issues.
+    """
     if not isinstance(movie, dict):
         raise TypeError(f"The movie object must be a dict, {type(movie)} passed.")
     id = movie.get("id", "")
@@ -54,6 +85,21 @@ def updateMovie(movie: dict, subselection: str = "") -> dict:
 
 @lru_cache(maxsize=None)
 def getPerson(id: int | str = "", subselection: str = "") -> dict:
+    """Gets the person information, subselection is for additional data.
+    To get both you must make two calls, one for the main person dict and another via update.
+
+    Args:
+        id (int | str): The ID of the person, nm### or ###.
+        subselection (str, optional): Typically called via update, the additional data to grab.
+
+    Returns:
+        dict: The information gathered from the query.
+
+    Raises:
+        TypeError: When an agrument is not of the correct type.
+        ValueError: When an argument was of the correct type, but invalid values.
+        HTTPError: Any lookup errors or connection issues.
+    """
     allowed_subselection = ["known_for"]
     if not isinstance(id, str) and not isinstance(id, int):
         raise TypeError(f"ID must be of type str or int, {type(id)} given.")
@@ -83,13 +129,31 @@ def getPerson(id: int | str = "", subselection: str = "") -> dict:
 
 
 def updatePerson(person: dict, subselection: str = "") -> dict:
-    # Do not cache, calls getPerson that will.
+    """Updates a person object (dict).
+    The dict is required to have a valid ID, the rest are optional.
+    The subselection is only allowed to be `known_for`.
+    This is not directly cached, `getPerson` is cached and will be called for the new data.
+
+    Args:
+        person (dict): The person object, typically obtained by `getPerson(id)`
+        subselction (str): The data to update.
+
+    Returns:
+        dict: The updated person.
+
+    Raises:
+        TypeError: When an agrument is not of the correct type.
+        ValueError: When an argument was of the correct type, but invalid values.
+        HTTPError: raised from the `getPerson` call on any lookup errors or connection issues.
+    """
     if not isinstance(person, dict):
         raise TypeError(f"The movie object must be a dict, {type(person)} passed.")
     id = person.get("id", "")
     person_id = "nm" + str(id).replace("nm", "").rjust(7, "0")
     if not id:
         raise ValueError("The ID of the person was not found in the object.")
+    if not subselection:
+        raise ValueError("A subselection is required.")
     if not re.fullmatch(r"nm\d{7}", person_id):
         raise ValueError(
             "The format of the ID was incorrect, 'tt#######' expected, '{id}' recieved."
