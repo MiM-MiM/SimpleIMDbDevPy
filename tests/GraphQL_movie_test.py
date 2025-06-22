@@ -33,7 +33,7 @@ class TestMovieMethods(unittest.TestCase):
     @responses.activate
     def test_valid(self):
         # fmt: off
-        tt0477051 = {'data': {'title': 
+        tt0477051 = {'data': {'title':
                               {'id': 'tt0477051', 'type': 'movie', 'is_adult': False,
                                'primary_title': 'Norbit', 'original_title': None,
                                'start_year': 2007, 'end_year': None, 'runtime_minutes': 102,

@@ -50,7 +50,7 @@ class IMDbGraphQL:
             "origin_countries": ((list, "IMDbGraphQL.Country"), not REQUIRED, MAIN_ATTRIBUTE),
             "posters": ((list, "IMDbGraphQL.Poster"), not REQUIRED, MAIN_ATTRIBUTE),
             # Credits must be false for main to avoid circular query generation
-            "credits": ((list, "IMDbGraphQL.Credit"), not REQUIRED, not MAIN_ATTRIBUTE), # fmt: skip
+            "credits": ((list, "IMDbGraphQL.Credit"), not REQUIRED, not MAIN_ATTRIBUTE),  # fmt: skip
         }
 
         __name__ = "IMDbGraphQL.Title"
@@ -101,7 +101,7 @@ class IMDbGraphQL:
             "dead_reason": (str, not REQUIRED, MAIN_ATTRIBUTE),
             "avatars": ((list, "IMDbGraphQL.Avatar", True), not REQUIRED, MAIN_ATTRIBUTE),
             # Known for is not the main to avoid slow queries.
-            "known_for": ((list, "IMDbGraphQL.Title", True), not REQUIRED, not MAIN_ATTRIBUTE), # fmt: skip
+            "known_for": ((list, "IMDbGraphQL.Title", True), not REQUIRED, not MAIN_ATTRIBUTE),  # fmt: skip
         }
 
         __name__ = "IMDbGraphQL.Name"
