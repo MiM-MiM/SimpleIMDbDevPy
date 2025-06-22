@@ -36,7 +36,7 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 SimpleIMDbDev/ --ignore=F541,E401 --count --exit-zero --max-complexity=15 --max-line-length=127 --statistics
         # flake the tests separate to ignore some formatting issues.
-        flake8 tests/ --ignore=F541,E401,E127,F841 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        flake8 tests/ --ignore=F541,E401,E127,F841,E501 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
         pytest
