@@ -8,7 +8,7 @@ https://github.com/MiM-MiM/SimpleIMDbDevPy/issues
 
 If you think you've found a bug open an issue. Including if something is missing and/or not returned as you expected. This can also be used to request a feature, please use a discussion if the feature is still in an idea phase and issues if you have an example of what you'd like and why.
 
-Always
+Always be sure you are on the latest version under the `master` branch. If you have an issue with an older `MAJOR` version, consider if updating is reasonable and solves the issue or if it is still present.
 
 # Discussions
 https://github.com/MiM-MiM/SimpleIMDbDevPy/discussions
@@ -41,7 +41,7 @@ All network calls must be spoofed, including any expected data being passed. Hea
 ## Formatted with black
 Black is a simple linting tool that keeps code a consistent design.
 
-<center><a href="https://black.readthedocs.io/en/stable/"><img src="images/black.webp" alt="Black: Any color you like" title="Black" width="75"/></a></center>
+<center><a href="https://black.readthedocs.io/en/stable/"><img src="images/black.webp" alt="Black: Any color you like" title="Black" height="75"/></a></center>
 
 Exceptions can be made to the max line width, use `# fmt: ign` for single lines or `# fmt: off/on` for longer sections. These sections should be ones where the potential data being longer than expected does not impact the understanding of the code.
 
