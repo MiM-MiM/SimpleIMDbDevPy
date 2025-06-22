@@ -76,7 +76,7 @@ def updateMovie(movie: dict, subselection: str = "") -> dict:
         raise ValueError("The ID of the movie was not found in the object.")
     if not re.fullmatch(r"tt\d{7}", title_id):
         raise ValueError(
-            "The format of the ID was incorrect, 'tt#######' expected, '{id}' recieved."
+            f"The format of the ID was incorrect, 'tt#######' expected, '{id}' recieved."
         )
     subeelection_json = getMovie(title_id, subselection)
     movie[subselection] = subeelection_json[subselection]
@@ -156,7 +156,7 @@ def updatePerson(person: dict, subselection: str = "") -> dict:
         raise ValueError("A subselection is required.")
     if not re.fullmatch(r"nm\d{7}", person_id):
         raise ValueError(
-            "The format of the ID was incorrect, 'tt#######' expected, '{id}' recieved."
+            f"The format of the ID was incorrect, 'tt#######' expected, '{id}' recieved."
         )
     subeelection_json = getPerson(person_id, subselection)
     person[subselection] = subeelection_json[subselection]
