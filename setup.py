@@ -12,7 +12,7 @@ setuptools.setup(
     keywords=["IMDb", "IMDbDev", "IMDbAPI", "API"],
     license="GNU General Public License v3.0",
     extras_require={
-        'dev': DEV_PACKAGES,
+        "dev": DEV_PACKAGES,
     },
     install_requires=[
         'importlib-metadata; python_version>="3.10"',

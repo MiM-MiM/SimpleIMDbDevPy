@@ -71,16 +71,20 @@ class IMDbAPI:
             case _:
                 response = GraphQL.getPerson(id).as_dict()
         return flatten(response)
-    
+
     def updateMovie(self, movie: dict, subselection: str = "") -> dict:
         if subselection != "" and self._parser != "Rest":
-            raise NotImplementedError("Updating movie subselection only possible via rest API.")
+            raise NotImplementedError(
+                "Updating movie subselection only possible via rest API."
+            )
         movie = Rest.updateMovie(movie, subselection)
         return flatten(movie)
-    
+
     def updatePerson(self, person: dict, subselection: str = "") -> dict:
         if subselection != "" and self._parser != "Rest":
-            raise NotImplementedError("Updating person subselection only possible via rest API.")
+            raise NotImplementedError(
+                "Updating person subselection only possible via rest API."
+            )
         person = Rest.updatePerson(person, subselection)
         return flatten(person)
 

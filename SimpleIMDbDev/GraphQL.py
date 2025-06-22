@@ -489,7 +489,7 @@ def getMovie(id: int | str = "") -> IMDbGraphQL.Title:
     if not isinstance(id, str) and not isinstance(id, int):
         raise TypeError(f"ID must be of type str or int, {type(id)} given.")
     query_id = "tt" + str(id).replace("tt", "").rjust(7, "0")
-    if not re.fullmatch(r'tt\d{7}', query_id):
+    if not re.fullmatch(r"tt\d{7}", query_id):
         raise ValueError("A valid ID must be provided, form tt#######.")
     attributes = get_attribute_main_query(IMDbGraphQL.Title.SCHEMA)
     query = """query titleById
@@ -501,7 +501,7 @@ def getMovie(id: int | str = "") -> IMDbGraphQL.Title:
     """.format(
         query_id=query_id, attributes=attributes
     )
-    query = re.sub(' +', ' ', query.replace(f'\n', ' ')).strip()
+    query = re.sub(" +", " ", query.replace(f"\n", " ")).strip()
     response = requests.post(API_ENDPOINT, json={"query": query}, headers=BASE_HEADERS)
     response.raise_for_status()
     response_json = response.json()
@@ -511,33 +511,13 @@ def getMovie(id: int | str = "") -> IMDbGraphQL.Title:
     movie = IMDbGraphQL.Title(**response_json)
     return movie
 
-def flatten(obj: dict) -> dict:
-    """Flatten a dict containing other objects.
-    Each object that has a `as_dict` method gets called with recursion.
-
-    Args:
-        obj(dict): The dict to be flattened.
-
-    Returns:
-        dict: The flattened dict."""
-    if not isinstance(obj, dict):
-        raise ValueError("flatten must be called with a dict.")
-    final_obj = dict()
-    for key, val in obj.items():
-        try:
-            val_as_dict = val.as_dict()
-            final_obj[key] = flatten(val_as_dict)
-        except AttributeError:
-            final_obj[key] = val
-    return final_obj
-
 
 @lru_cache(maxsize=None)
 def getPerson(id: str | int) -> IMDbGraphQL.Name:
     if not isinstance(id, str) and not isinstance(id, int):
         raise TypeError(f"ID must be of type str or int, {type(id)} given.")
     query_id = "nm" + str(id).replace("nm", "").rjust(7, "0")
-    if not re.fullmatch(r'nm\d{7}', query_id):
+    if not re.fullmatch(r"nm\d{7}", query_id):
         raise ValueError("A valid ID must be provided, form nm#######.")
     attributes = get_attribute_main_query(IMDbGraphQL.Name.SCHEMA)
     query = """query personById
@@ -549,7 +529,7 @@ def getPerson(id: str | int) -> IMDbGraphQL.Name:
     """.format(
         query_id=query_id, attributes=attributes
     )
-    query = re.sub(' +', ' ', query.replace(f'\n', ' ')).strip()
+    query = re.sub(" +", " ", query.replace(f"\n", " ")).strip()
     response = requests.post(API_ENDPOINT, json={"query": query}, headers=BASE_HEADERS)
     response.raise_for_status()
     response_json = response.json()
